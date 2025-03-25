@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 class CircularRegionRobotPicker:
-    def __init__(self, camera_id=0, image_width=640, image_height=480, num_regions=6):
+    def __init__(self, camera_id=1, image_width=640, image_height=480, num_regions=6):
         """
         Initialize the circle-region-based picker system with live camera feed
         
