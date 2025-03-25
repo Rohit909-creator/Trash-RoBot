@@ -1,7 +1,13 @@
 import cv2
 import numpy as np
 import time
+from Detector import YOLOv11Detector
 
+import logging
+logging.getLogger("ultralytics").setLevel(logging.WARNING)  # Only show warnings and errors
+
+model_size = 'n'
+detector = YOLOv11Detector(model_size=model_size)
 # S1A24 S3A39 S5A152 S9A70
 
 # Gripper
@@ -222,12 +228,17 @@ class CircularRegionRobotPicker:
         # detection logic and just return the detected bounding boxes
         
         # For simulation, we use mouse drawing - this is handled in the draw_bbox callback
-        pass
+        detections = detector.detect_objects(frame)
+        if detections:
+            bbox = detections[0]['box']
+            return bbox
+        else:
+            return None
     
     def run(self):
         """Run the circular region picker with live camera feed"""
         cv2.namedWindow('Circular Region Picker')
-        cv2.setMouseCallback('Circular Region Picker', self.draw_bbox)
+        # cv2.setMouseCallback('Circular Region Picker', self.draw_bbox)
         
         while True:
             ret, frame = self.cap.read()
@@ -237,6 +248,8 @@ class CircularRegionRobotPicker:
                 
             # Flip horizontally for more intuitive interaction
             frame = cv2.flip(frame, 1)
+            
+            self.bbox = self.simulate_object_detection(frame)
             
             # Draw circular regions
             for i, region in enumerate(self.circular_regions):
@@ -277,6 +290,7 @@ class CircularRegionRobotPicker:
                 # Get pick information
                 pick_info = self.calculate_pick_position(self.bbox)
                 pick_x, pick_y = pick_info['position']
+                self.active_region = self.check_bbox_in_region(self.bbox)
                 
                 # Draw picking position
                 cv2.circle(frame, (pick_x, pick_y), 8, (255, 0, 0), -1)
@@ -285,6 +299,12 @@ class CircularRegionRobotPicker:
                 
                 # Show region and angles if in a region
                 if self.active_region is not None:
+                    if pick_info['region_index'] is not None:
+                        print(f"In region: {pick_info['region_index']}")
+                        self.pickinfo = pick_info
+                    else:
+                        print("Not in any region")
+                        self.pickinfo = None
                     region_idx = self.active_region['index']
                     angles = self.active_region['angles']
                     

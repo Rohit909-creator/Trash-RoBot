@@ -6,6 +6,9 @@ import os
 import sys
 import torch
 
+# import logging
+# logging.getLogger("ultralytics").setLevel(logging.WARNING)  # Only show warnings and errors
+
 # Dictionary mapping common objects to degradable/non-degradable status
 DEGRADABILITY_MAP = {
     # Degradable items
@@ -174,7 +177,7 @@ class YOLOv11Detector:
             List of detection results with bounding boxes
         """
         # Run inference
-        results = self.model(frame, conf=conf_threshold)[0]
+        results = self.model(frame, conf=conf_threshold, verbose=False)[0]
         
         # Process detections
         detections = []
@@ -188,12 +191,12 @@ class YOLOv11Detector:
             
             # Check if the object is in our degradability map
             degradability = DEGRADABILITY_MAP.get(class_name.lower(), 'unknown')
-            
+            factor = 100
             detections.append({
                 'object': class_name,
                 'confidence': float(confidence),
                 'degradability': degradability,
-                'box': (x1, y1, x2, y2)
+                'box': (x1-factor, y1-factor, x2-factor, y2-factor)
             })
             
         return detections

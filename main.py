@@ -19,7 +19,7 @@ def bot():
                         print(f"Detected region: {region_index}")
                         
                         # Universal servo sequence for now
-                        servo_sequence = "S1A50S3A39S5A130S9A70"
+                        servo_sequence = "S1A70S3A39S5A100S9A70"
                         arduino.send(servo_sequence)
                         
                         # Small delay to prevent tight looping
