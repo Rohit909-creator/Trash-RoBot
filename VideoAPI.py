@@ -2,8 +2,14 @@ import cv2
 import numpy as np
 import time
 
+# S1A24 S3A39 S5A152 S9A70
+
+# Gripper
+# Open S7A81
+# Close S7A1
+
 class CircularRegionRobotPicker:
-    def __init__(self, camera_id=1, image_width=640, image_height=480, num_regions=6):
+    def __init__(self, camera_id=1, image_width=640, image_height=480, num_regions=5):
         """
         Initialize the circle-region-based picker system with live camera feed
         
@@ -16,6 +22,7 @@ class CircularRegionRobotPicker:
         self.image_width = image_width
         self.image_height = image_height
         self.num_regions = num_regions
+        self.pickinfo = None
         
         # Create circular regions with hardcoded positions and robotic arm angles
         self.circular_regions = []
@@ -27,7 +34,7 @@ class CircularRegionRobotPicker:
         # Define regions with (center_x, center_y, radius, [angle1, angle2, angle3])
         # The angles represent the robot arm joint angles for picking from this region
         
-        locations = [(475, 100), (550, 380), (518, 240), (151, 101), (307, 100), (380, 100)]
+        locations = [(475, 100), (550, 380), (518, 240), (151, 101), (307, 100)]
         for i in range(num_regions):
             center_x = spacing * (i + 1)
             # Hardcoded angles for each region (simulated joint angles in degrees)
@@ -201,8 +208,10 @@ class CircularRegionRobotPicker:
             print(f"Robot angles: {pick_info['angles']}")
             if pick_info['region_index'] is not None:
                 print(f"In region: {pick_info['region_index']}")
+                self.pickinfo = pick_info
             else:
                 print("Not in any region")
+                self.pickinfo = None
     
     def simulate_object_detection(self, frame):
         """
@@ -218,7 +227,7 @@ class CircularRegionRobotPicker:
     def run(self):
         """Run the circular region picker with live camera feed"""
         cv2.namedWindow('Circular Region Picker')
-        # cv2.setMouseCallback('Circular Region Picker', self.draw_bbox)
+        cv2.setMouseCallback('Circular Region Picker', self.draw_bbox)
         
         while True:
             ret, frame = self.cap.read()
