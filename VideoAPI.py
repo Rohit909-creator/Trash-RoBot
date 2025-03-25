@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 class CircularRegionRobotPicker:
-    def __init__(self, camera_id=0, image_width=640, image_height=480, num_regions=5):
+    def __init__(self, camera_id=0, image_width=640, image_height=480, num_regions=6):
         """
         Initialize the circle-region-based picker system with live camera feed
         
@@ -26,6 +26,8 @@ class CircularRegionRobotPicker:
         
         # Define regions with (center_x, center_y, radius, [angle1, angle2, angle3])
         # The angles represent the robot arm joint angles for picking from this region
+        
+        locations = [(475, 100), (550, 380), (518, 240), (151, 101), (307, 100), (380, 100)]
         for i in range(num_regions):
             center_x = spacing * (i + 1)
             # Hardcoded angles for each region (simulated joint angles in degrees)
@@ -35,8 +37,15 @@ class CircularRegionRobotPicker:
                 90,                               # Shoulder angle
                 45                                # Elbow angle
             ]
+            # self.circular_regions.append({
+            #     'center': (center_x, y_position),
+            #     'radius': 50,
+            #     'angles': angles,
+            #     'index': i
+            # })
+            
             self.circular_regions.append({
-                'center': (center_x, y_position),
+                'center': locations[i],
                 'radius': 50,
                 'angles': angles,
                 'index': i
@@ -47,40 +56,40 @@ class CircularRegionRobotPicker:
             90,                               # Shoulder angle
             45                                # Elbow angle
         ]
-        self.circular_regions.append({
-            'center': (448, 32),
-            'radius': 50,
-            'angles': angles,
-            'index': 0
-        })
+        # self.circular_regions.append({
+        #     'center': (200, 300),
+        #     'radius': 50,
+        #     'angles': angles,
+        #     'index': 0
+        # })
         
-        self.circular_regions.append({
-            'center': (448, 32),
-            'radius': 50,
-            'angles': angles,
-            'index': 1
-        })
+        # self.circular_regions.append({
+        #     'center': (448, 32),
+        #     'radius': 50,
+        #     'angles': angles,
+        #     'index': 1
+        # })
         
-        self.circular_regions.append({
-            'center': (448, 32),
-            'radius': 50,
-            'angles': angles,
-            'index': 2
-        })
+        # self.circular_regions.append({
+        #     'center': (448, 32),
+        #     'radius': 50,
+        #     'angles': angles,
+        #     'index': 2
+        # })
         
-        self.circular_regions.append({
-            'center': (448, 32),
-            'radius': 50,
-            'angles': angles,
-            'index': 3
-        })
+        # self.circular_regions.append({
+        #     'center': (448, 32),
+        #     'radius': 50,
+        #     'angles': angles,
+        #     'index': 3
+        # })
         
-        self.circular_regions.append({
-            'center': (448, 32),
-            'radius': 50,
-            'angles': angles,
-            'index': 4
-        })
+        # self.circular_regions.append({
+        #     'center': (448, 32),
+        #     'radius': 50,
+        #     'angles': angles,
+        #     'index': 4
+        # })
             
         
         print(f"Created {num_regions} circular regions with robot arm angles")
@@ -209,7 +218,7 @@ class CircularRegionRobotPicker:
     def run(self):
         """Run the circular region picker with live camera feed"""
         cv2.namedWindow('Circular Region Picker')
-        cv2.setMouseCallback('Circular Region Picker', self.draw_bbox)
+        # cv2.setMouseCallback('Circular Region Picker', self.draw_bbox)
         
         while True:
             ret, frame = self.cap.read()
